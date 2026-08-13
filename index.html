@@ -334,27 +334,39 @@
            Print Styles (Paper Layout)
            ========================================================= */
         @media print {
-            @page { size: A4; margin: 0; }
+            @page { 
+                size: A4 portrait; 
+                margin: 0cm !important; 
+            }
             #input-form { display: none !important; }
             #print-layout { display: block !important; }
             
             * {
-                line-height: 1.2 !important; /* إجبار تقليل المسافة بين الأسطر */
-                -webkit-print-color-adjust: exact !important; /* إجبار طباعة الألوان */
+                line-height: 1.2 !important; 
+                -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important;
             }
 
-            body { 
+            html, body { 
                 background: none; 
-                padding: 0; 
-                margin: 0; 
+                padding: 0 !important; 
+                margin: 0 !important; 
                 font-family: 'Cairo', sans-serif; 
                 direction: rtl;
+                height: 100% !important;
+                width: 100% !important;
             }
 
             .paper {
-                margin: 0;
-                box-shadow: none;
+                margin: 0 !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                page-break-inside: avoid !important;
+                page-break-after: always !important;
+                overflow: hidden !important;
+                border: none !important;
             }
         }
     </style>
