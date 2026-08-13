@@ -182,10 +182,13 @@
         }
         
         .print-bg {
-            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: auto; /* Let image dictate the height */
+            height: 100%;
             z-index: 1;
+            object-fit: fill;
         }
 
         .abs-val {
@@ -351,13 +354,16 @@
                 font-family: 'Cairo', sans-serif; 
                 direction: rtl;
                 width: 100% !important;
+                height: 100% !important;
             }
 
             .paper {
-                margin: 0 auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
                 box-shadow: none !important;
                 width: 100% !important;
-                height: auto !important; /* Height is now determined by .print-bg */
+                height: 100% !important; /* Force exactly one page height */
+                max-height: 100% !important;
                 page-break-inside: avoid !important;
                 page-break-after: always !important;
                 break-after: page !important;
