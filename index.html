@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام كورس قاعة DRAGON GYM</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        /* =========================================================
+           Screen Styles (Input Interface)
+           ========================================================= */
+        @media screen {
+            #print-layout { display: none; }
+            
+            body { 
+                font-family: 'Cairo', sans-serif; 
+                background: #f0f2f5; 
+                padding: 20px; 
+                margin: 0; 
+                direction: rtl;
+            }
+            .container { 
+                max-width: 1000px; 
+                margin: auto; 
+                background: white; 
+                padding: 30px; 
+                border-radius: 12px; 
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+            }
+            h1.app-title { 
+                text-align: center; 
+                color: #1a237e; 
+                margin-bottom: 30px; 
+                font-weight: 900;
+                direction: ltr; /* To keep DRAGON GYM properly aligned */
+            }
+            .form-section { 
+                border: 2px solid #e0e0e0; 
+                padding: 20px; 
+                border-radius: 8px; 
+                margin-bottom: 25px; 
+                background: #fff;
+            }
+            .form-section legend { 
+                font-weight: bold; 
+                color: #d32f2f; 
+                padding: 0 10px; 
+                font-size: 1.3em; 
+                background: white;
+            }
+            .row { 
+                display: flex; 
+                gap: 20px; 
+                flex-wrap: wrap; 
+                margin-bottom: 15px; 
+            }
+            .form-group { 
+                flex: 1; 
+                display: flex; 
+                flex-direction: column; 
+                min-width: 150px; 
+            }
+            .form-group.large { flex: 2; }
+            .form-group label { 
+                margin-bottom: 8px; 
+                font-weight: bold; 
+                color: #333; 
+            }
+            .form-group input, .form-group textarea { 
+                padding: 12px; 
+                border: 1px solid #ccc; 
+                border-radius: 6px; 
+                font-family: inherit; 
+                font-size: 16px; 
+                transition: border-color 0.3s;
+            }
+            .form-group input:focus, .form-group textarea:focus { 
+                border-color: #1a237e; 
+                outline: none; 
+                box-shadow: 0 0 5px rgba(26, 35, 126, 0.2);
+            }
+            
+            .days-grid { 
+                display: grid; 
+                grid-template-columns: 1fr 1fr; 
+                gap: 20px; 
+            }
+            .day-card { 
+                background: #f9f9f9; 
+                padding: 20px; 
+                border-radius: 8px; 
+                border: 1px solid #e0e0e0; 
+            }
+            .day-card h3 { 
+                margin-top: 0; 
+                color: #1a237e; 
+                border-bottom: 2px solid #1a237e; 
+                padding-bottom: 8px; 
+                display: inline-block; 
+            }
+            .exercise-input-group { 
+                display: flex; 
+                gap: 10px; 
+                margin-bottom: 12px; 
+                align-items: center; 
+            }
+            .exercise-input-group span { 
+                font-weight: bold; 
+                min-width: 25px; 
+                color: #555;
+            }
+            .exercise-input-group input { 
+                flex: 1; 
+                padding: 8px 12px; 
+                border: 1px solid #ccc; 
+                border-radius: 4px; 
+                font-family: inherit; 
+            }
+            .exercise-input-group input:focus {
+                border-color: #1a237e;
+                outline: none;
+            }
+            
+            .btn-add-day {
+                display: inline-block;
+                padding: 10px 15px;
+                background: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                margin-top: 15px;
+                transition: background 0.3s;
+            }
+            .btn-add-day:hover { background: #388e3c; }
+
+            .btn-print { 
+                display: block; 
+                width: 100%; 
+                padding: 18px; 
+                background: #1a237e; 
+                color: white; 
+                border: none; 
+                border-radius: 8px; 
+                font-size: 22px; 
+                font-weight: bold; 
+                cursor: pointer; 
+                margin-top: 20px; 
+                transition: background 0.3s, transform 0.1s; 
+                box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            }
+            .btn-print:hover { background: #0d134a; }
+            .btn-print:active { transform: scale(0.98); }
+
+            @media (max-width: 768px) {
+                .days-grid { grid-template-columns: 1fr; }
+            }
+        }
+
+        /* =========================================================
+           Print Layout Styles (Applied to both Screen Preview & Print)
+           ========================================================= */
+        .paper { 
+            width: 210mm;
+            /* height: 297mm; Removed fixed height to allow image to dictate height */
+            position: relative; 
+            box-sizing: border-box; 
+            page-break-after: always;
+            break-after: page;
+            background-color: white;
+            margin: 0 auto 20px auto; /* Centered on screen with gap */
+            box-shadow: 0 0 15px rgba(0,0,0,0.2); /* Shadow for screen preview */
+            overflow: hidden;
+        }
+        .paper:last-child {
+            page-break-after: auto;
+            break-after: auto;
+            margin-bottom: 0;
+        }
+        
+        .print-bg {
+            display: block;
+            width: 100%;
+            height: auto; /* Let image dictate the height */
+            z-index: 1;
+        }
+
+        .abs-val {
+            position: absolute;
+            z-index: 2;
+            font-family: 'Arial', sans-serif;
+            font-size: 11pt;
+            font-weight: bold;
+            color: #000;
+            text-align: right;
+            direction: rtl;
+            padding: 0 5px;
+        }
+        
+        .val-name { top: 28.2%; left: 6%; width: 15%; text-align: center; }
+        .val-age { top: 31.5%; left: 6%; width: 15%; text-align: center; }
+        .val-height { top: 35.5%; left: 6%; width: 15%; text-align: center; }
+        .val-weight { top: 39.5%; left: 6%; width: 15%; text-align: center; }
+        .val-date-from { top: 43.5%; left: 6%; width: 15%; text-align: center; }
+        .val-date-to { top: 47.5%; left: 6%; width: 15%; text-align: center; }
+
+        .footer-phone {
+            position: absolute;
+            z-index: 2;
+            bottom: 1.6%;
+            left: 12.5%;
+            width: 12.5%;
+            height: 16px;
+            background-color: #000;
+            color: #d1d5db;
+            font-family: Arial, sans-serif;
+            font-size: 8pt;
+            font-weight: bold;
+            direction: ltr;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-insta {
+            position: absolute;
+            z-index: 2;
+            bottom: 1.6%;
+            left: 56.2%;
+            width: 13.8%;
+            height: 16px;
+            background-color: #000;
+            color: #d1d5db;
+            font-family: Arial, sans-serif;
+            font-size: 7.8pt;
+            font-weight: bold;
+            direction: ltr;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-fb {
+            position: absolute;
+            z-index: 2;
+            bottom: 1.6%;
+            left: 34.2%;
+            width: 13.8%;
+            height: 16px;
+            background-color: #000;
+            color: #d1d5db;
+            font-family: 'Cairo', sans-serif;
+            font-size: 6.8pt;
+            font-weight: bold;
+            white-space: nowrap;
+            direction: rtl;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .workout-box {
+            position: absolute;
+            z-index: 2;
+            top: 22%;
+            left: 31%;
+            width: 38%;
+            height: auto;
+            background-color: transparent;
+            border: none;
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        .day-title {
+            background-color: #111827;
+            color: #b38836;
+            text-align: center;
+            padding: 8px;
+            font-size: 14pt;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .exercise-row { 
+            display: flex; 
+            align-items: flex-start; 
+            margin-bottom: 12px; 
+        }
+        .exercise-num { 
+            font-weight: bold; 
+            margin-left: 8px; 
+            min-width: 25px; 
+            font-size: 11pt; 
+            white-space: nowrap;
+            color: #111827;
+        }
+        .exercise-val { 
+            flex-grow: 1; 
+            border-bottom: 1px dotted #111827; 
+            font-size: 12pt; 
+            padding: 0 5px; 
+            min-height: 18pt; 
+            color: #000; 
+            font-weight: bold;
+            word-wrap: break-word;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+        .notes-section {
+            position: absolute;
+            z-index: 2;
+            bottom: 10%;
+            left: 31%;
+            width: 38%;
+            text-align: center;
+            color: #d32f2f;
+            font-weight: bold;
+            font-size: 11pt;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px dashed #d32f2f;
+        }
+
+        /* =========================================================
+           Print Styles (Paper Layout)
+           ========================================================= */
+        @media print {
+            @page { 
+                size: A4 portrait; 
+                margin: 0 !important; 
+            }
+            #input-form { display: none !important; }
+            #print-layout { display: block !important; }
+            
+            * {
+                line-height: 1.2 !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
+            }
+
+            html, body { 
+                background: none; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                font-family: 'Cairo', sans-serif; 
+                direction: rtl;
+                width: 100% !important;
+            }
+
+            .paper {
+                margin: 0 auto !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                height: auto !important; /* Height is now determined by .print-bg */
+                page-break-inside: avoid !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                overflow: hidden !important;
+                border: none !important;
+                position: relative;
+            }
+
+            .paper:last-child {
+                page-break-after: auto !important;
+                break-after: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <img src="hero.png" style="display:none;" id="preload-hero">
+    <img src="template.jpg" style="display:none;" id="preload-template">
+    <datalist id="exercise-suggestions"></datalist>
+    <datalist id="name-suggestions"></datalist>
+
+    <!-- =========================================================
+         Input Interface (Visible on Screen)
+         ========================================================= -->
+    <div class="container" id="input-form">
+        <h1 class="app-title">نظام إدارة كورسات DRAGON GYM</h1>
+        
+        <fieldset class="form-section">
+            <legend>معلومات اللاعب</legend>
+            <div class="row">
+                <div class="form-group large">
+                    <label>الاسم الثلاثي</label>
+                    <input type="text" id="in_name" placeholder="ادخل الاسم هنا" autocomplete="on" list="name-suggestions">
+                </div>
+                <div class="form-group">
+                    <label>العمر</label>
+                    <input type="number" id="in_age">
+                </div>
+                <div class="form-group">
+                    <label>الطول (سم)</label>
+                    <input type="number" id="in_height">
+                </div>
+                <div class="form-group">
+                    <label>الوزن (كغ)</label>
+                    <input type="number" id="in_weight">
+                </div>
+                <div class="form-group">
+                    <label>التاريخ من</label>
+                    <input type="date" id="in_date">
+                </div>
+                <div class="form-group">
+                    <label>التاريخ إلى</label>
+                    <input type="date" id="in_date_to">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="form-section">
+            <legend>التمارين (الكورس)</legend>
+            <div class="days-grid" id="in_days_container">
+                <!-- Days generated dynamically by JS -->
+            </div>
+            <button class="btn-add-day" onclick="addDay()">➕ إضافة يوم تمرين جديد</button>
+        </fieldset>
+
+        <fieldset class="form-section">
+            <legend>ملاحظات إضافية</legend>
+            <div class="form-group">
+                <textarea id="in_notes" rows="3" placeholder="اكتب أي ملاحظات خاصة باللاعب أو الكورس هنا..."></textarea>
+            </div>
+        </fieldset>
+
+        <button class="btn-print" onclick="prepareAndPrint()">🖨️ تجهيز وطباعة الورقة</button>
+    </div>
+
+
+    <!-- =========================================================
+         Print Template (Visible only when Printing)
+         ========================================================= -->
+    <div id="print-layout"></div>
+
+    <!-- =========================================================
+         JavaScript Logic
+         ========================================================= -->
+    <script>
+        const dayNamesArabic = ['', 'الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع', 'العاشر'];
+        let dayCount = 0;
+
+        function loadSuggestions() {
+            let savedExercises = JSON.parse(localStorage.getItem('dragonGymExercises') || '[]');
+            let savedNames = JSON.parse(localStorage.getItem('dragonGymNames') || '[]');
+            
+            const exList = document.getElementById('exercise-suggestions');
+            exList.innerHTML = savedExercises.map(ex => `<option value="${ex}">`).join('');
+            
+            const nameList = document.getElementById('name-suggestions');
+            nameList.innerHTML = savedNames.map(name => `<option value="${name}">`).join('');
+        }
+
+        function saveSuggestions() {
+            let savedExercises = JSON.parse(localStorage.getItem('dragonGymExercises') || '[]');
+            let savedNames = JSON.parse(localStorage.getItem('dragonGymNames') || '[]');
+            
+            const nameVal = document.getElementById('in_name').value.trim();
+            if (nameVal && !savedNames.includes(nameVal)) {
+                savedNames.push(nameVal);
+            }
+
+            for (let dayIndex = 0; dayIndex < dayCount; dayIndex++) {
+                for (let row = 1; row <= 10; row++) {
+                    const exerciseId = `ex_${dayIndex}_${row}`;
+                    const valEl = document.getElementById(`in_${exerciseId}`);
+                    if (valEl) {
+                        const val = valEl.value.trim();
+                        if (val && !savedExercises.includes(val)) {
+                            savedExercises.push(val);
+                        }
+                    }
+                }
+            }
+            
+            localStorage.setItem('dragonGymExercises', JSON.stringify(savedExercises));
+            localStorage.setItem('dragonGymNames', JSON.stringify(savedNames));
+            loadSuggestions();
+        }
+
+        // Add a new day to the Input UI
+        function addDay() {
+            dayCount++;
+            const dayName = `اليوم ${dayNamesArabic[dayCount] || dayCount}:`;
+            const dayIndex = dayCount - 1;
+
+            const inDaysContainer = document.getElementById('in_days_container');
+            
+            const inDayCard = document.createElement('div');
+            inDayCard.className = 'day-card';
+            inDayCard.innerHTML = `<h3>${dayName}</h3>`;
+
+            for (let i = 1; i <= 10; i++) {
+                const exerciseId = `ex_${dayIndex}_${i}`;
+                const inRow = document.createElement('div');
+                inRow.className = 'exercise-input-group';
+                inRow.innerHTML = `
+                    <span>${i} -</span>
+                    <input type="text" id="in_${exerciseId}" autocomplete="on" list="exercise-suggestions">
+                `;
+                inDayCard.appendChild(inRow);
+            }
+
+            inDaysContainer.appendChild(inDayCard);
+        }
+
+        // Initialize with 4 days by default
+        for (let i = 0; i < 4; i++) {
+            addDay();
+        }
+
+        // Set default date to today
+        document.getElementById('in_date').valueAsDate = new Date();
+        loadSuggestions();
+
+        // Function called when "Print" button is clicked
+        function prepareAndPrint() {
+            const printLayout = document.getElementById('print-layout');
+            printLayout.innerHTML = ''; 
+
+            const nameVal = document.getElementById('in_name').value || '';
+            const ageVal = document.getElementById('in_age').value || '';
+            const heightVal = document.getElementById('in_height').value || '';
+            const weightVal = document.getElementById('in_weight').value || '';
+            const dateVal = document.getElementById('in_date').value || '';
+            const dateToVal = document.getElementById('in_date_to').value || '';
+            const notesContent = document.getElementById('in_notes').value || '';
+
+            for (let dayIndex = 0; dayIndex < dayCount; dayIndex++) {
+                let hasExercises = false;
+                let dayHTML = '';
+                
+                for (let row = 1; row <= 10; row++) {
+                    const exerciseId = `ex_${dayIndex}_${row}`;
+                    const valEl = document.getElementById(`in_${exerciseId}`);
+                    let val = '';
+                    if (valEl) val = valEl.value;
+                    
+                    if (val.trim() !== '') hasExercises = true;
+
+                    dayHTML += `
+                        <div class="exercise-row">
+                            <span class="exercise-num">${row} -</span>
+                            <div class="exercise-val">${val}</div>
+                        </div>
+                    `;
+                }
+
+                if (!hasExercises && dayIndex > 0) continue;
+
+                const dayName = dayNamesArabic[dayIndex + 1] || (dayIndex + 1);
+                
+                const paperDiv = document.createElement('div');
+                paperDiv.className = 'paper';
+                
+                // Add absolute values for Player Info and Footer Phone
+                let html = `
+                    <img src="template.jpg" class="print-bg">
+                    <div class="footer-phone">0770 137 1373</div>
+                    <div class="footer-fb">عمار عبدالعزيز الممشهداني</div>
+                    <div class="footer-insta">captain_ammar1</div>
+                    <div class="abs-val val-name">${nameVal}</div>
+                    <div class="abs-val val-age">${ageVal}</div>
+                    <div class="abs-val val-height">${heightVal}</div>
+                    <div class="abs-val val-weight">${weightVal}</div>
+                    <div class="abs-val val-date-from">${dateVal}</div>
+                    <div class="abs-val val-date-to">${dateToVal}</div>
+                    
+                    <div class="workout-box">
+                        <div class="day-title">اليوم ${dayName}</div>
+                        ${dayHTML}
+                    </div>
+                `;
+                
+                paperDiv.innerHTML = html;
+                printLayout.appendChild(paperDiv);
+            }
+
+            // Trigger Browser Print Dialog
+            saveSuggestions();
+            
+            // Force display via JS to avoid CSS media query bugs
+            document.getElementById('input-form').style.display = 'none';
+            printLayout.style.display = 'block';
+
+            // Add a small delay to ensure background image is ready
+            setTimeout(() => {
+                window.print();
+                
+                // Restore screen after printing
+                document.getElementById('input-form').style.display = 'block';
+                printLayout.style.display = 'none';
+            }, 500);
+        }
+    </script>
+</body>
+</html>
