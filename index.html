@@ -336,7 +336,7 @@
         @media print {
             @page { 
                 size: A4 portrait; 
-                margin: 0cm !important; 
+                margin: 0 !important; 
             }
             #input-form { display: none !important; }
             #print-layout { display: block !important; }
@@ -353,20 +353,27 @@
                 margin: 0 !important; 
                 font-family: 'Cairo', sans-serif; 
                 direction: rtl;
-                height: 100% !important;
                 width: 100% !important;
+                height: 100% !important;
             }
 
             .paper {
                 margin: 0 !important;
                 box-shadow: none !important;
                 width: 100% !important;
-                height: 100vh !important;
-                max-height: 100vh !important;
+                height: 99.5vh !important; /* Slightly less than 100vh to prevent mobile browsers from triggering a new page */
+                max-height: 99.5vh !important;
                 page-break-inside: avoid !important;
                 page-break-after: always !important;
+                break-after: page !important;
                 overflow: hidden !important;
                 border: none !important;
+                position: relative;
+            }
+
+            .paper:last-child {
+                page-break-after: auto !important;
+                break-after: auto !important;
             }
         }
     </style>
