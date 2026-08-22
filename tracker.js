@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     modalContent.style.cssText = 'background:white; max-width:900px; margin:20px auto; padding:30px; border-radius:12px; position:relative; min-height:300px; direction:rtl; box-shadow: 0 10px 25px rgba(0,0,0,0.2); font-family: "Cairo", sans-serif;';
     
     const closeBtn = document.createElement('button');
-    closeBtn.innerHTML = '❌ إغلاق البروفايل';
+    closeBtn.innerHTML = 'إغلاق البروفايل';
     closeBtn.style.cssText = 'position:absolute; top:20px; left:20px; background:#d32f2f; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; font-size: 14px;';
     closeBtn.onclick = () => modal.style.display = 'none';
     
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.style.display = 'block';
         profileBody.innerHTML = `
             <div style="text-align:center; padding:50px;">
-                <h3 style="color:#1a237e;">⏳ جاري جلب ملف "${name}"...</h3>
+                <h3 style="color:#1a237e;">جاري جلب ملف "${name}"...</h3>
             </div>
         `;
         
@@ -152,33 +152,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 html += `
                 <div style="border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 10px; background: #fafafa; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
                     <div style="display:flex; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px;">
-                        <h3 style="margin:0; color:#b38836;">📅 كورس: ${rec.date || 'غير محدد'} (إلى ${rec.dateTo || 'غير محدد'})</h3>
+                        <h3 style="margin:0; color:#b38836;">كورس: ${rec.date || 'غير محدد'} (إلى ${rec.dateTo || 'غير محدد'})</h3>
                         <span style="color:#888; font-size:12px;">وقت الحفظ: ${rec.timestamp}</span>
                     </div>
                     
                     <div style="display:flex; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
-                        <div style="background:#e8eaf6; padding:8px 15px; border-radius:20px; color:#1a237e; font-weight:bold; font-size:14px;">⚖️ الوزن: ${rec.weight || '--'} كغ</div>
-                        <div style="background:#e8eaf6; padding:8px 15px; border-radius:20px; color:#1a237e; font-weight:bold; font-size:14px;">📏 الطول: ${rec.height || '--'} سم</div>
-                        <div style="background:#e8eaf6; padding:8px 15px; border-radius:20px; color:#1a237e; font-weight:bold; font-size:14px;">🎂 العمر: ${rec.age || '--'}</div>
+                        <div style="background:#e8eaf6; padding:8px 15px; border-radius:20px; color:#1a237e; font-weight:bold; font-size:14px;">الوزن: ${rec.weight || '--'} كغ</div>
+                        <div style="background:#e8eaf6; padding:8px 15px; border-radius:20px; color:#1a237e; font-weight:bold; font-size:14px;">الطول: ${rec.height || '--'} سم</div>
+                        <div style="background:#e8eaf6; padding:8px 15px; border-radius:20px; color:#1a237e; font-weight:bold; font-size:14px;">العمر: ${rec.age || '--'}</div>
                     </div>
                     
                     ${rec.notes ? `
                     <div style="background:#e8f5e9; border:1px solid #c8e6c9; padding:15px; border-radius:8px; margin-bottom:15px; color:#2e7d32;">
-                        <strong style="display:block; margin-bottom:5px;">🍏 ملاحظات وغذاء:</strong>
+                        <strong style="display:block; margin-bottom:5px;">ملاحظات وغذاء:</strong>
                         <div style="white-space: pre-wrap;">${rec.notes}</div>
                     </div>` : ''}
                     
-                    <strong style="color:#333; margin-bottom:10px; display:inline-block;">💪 أيام التمرين:</strong>
+                    <strong style="color:#333; margin-bottom:10px; display:inline-block;">أيام التمرين:</strong>
                     <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:15px;">
                 `;
                 
                 if (rec.courseDays && rec.courseDays.length > 0) {
                     rec.courseDays.forEach(d => {
                         html += `
-                        <div style="background:white; padding:12px; border:1px solid #e0e0e0; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="background:white; padding:12px; border:1px solid #e0e0e0; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
                             <strong style="color:#d32f2f; display:block; border-bottom:1px solid #eee; padding-bottom:5px; margin-bottom:8px;">${d.dayTitle}</strong>
-                            <ul style="margin:0; padding-right:20px; font-size:14px; color:#444;">
-                                ${d.exercises.map(ex => `<li style="margin-bottom:4px;">${ex}</li>`).join('')}
+                            <ul style="margin:0; padding-right:20px; font-size:14px; color:#444; word-wrap: break-word; overflow-wrap: anywhere;">
+                                ${d.exercises.map(ex => `<li style="margin-bottom:4px; word-break: break-word;">${ex}</li>`).join('')}
                             </ul>
                         </div>`;
                     });
@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             profileBody.innerHTML = `
                 <div style="text-align:center; padding:50px; color:red;">
-                    <h3>❌ حدث خطأ في الاتصال</h3>
+                    <h3>حدث خطأ في الاتصال</h3>
                     <p>يرجى التأكد من اتصالك بالإنترنت.</p>
                 </div>
             `;
