@@ -265,16 +265,21 @@
             justify-content: center;
         }
 
-        .workout-box {
+        .workouts-container {
             position: absolute;
             z-index: 2;
             top: 22%;
             left: 31%;
             width: 38%;
-            height: auto;
+            height: 73%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .workout-box {
             background-color: transparent;
             border: none;
-            padding: 8px 12px;
+            padding: 0 12px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -283,24 +288,24 @@
             background-color: #111827;
             color: #b38836;
             text-align: center;
-            padding: 5px;
-            font-size: 12pt;
+            padding: 3px;
+            font-size: 14pt;
             font-weight: bold;
             border-radius: 4px;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
             flex-shrink: 0;
         }
         .exercise-row {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             flex-shrink: 0;
         }
         .exercise-num {
             font-weight: bold;
             margin-left: 6px;
             min-width: 20px;
-            font-size: 9.5pt;
+            font-size: 11pt;
             white-space: nowrap;
             color: #111827;
             flex-shrink: 0;
@@ -308,15 +313,15 @@
         .exercise-val {
             flex-grow: 1;
             border-bottom: 1px dotted #111827;
-            font-size: 10pt;
+            font-size: 11pt;
             padding: 0 3px;
-            min-height: 14pt;
+            min-height: 15pt;
             color: #000;
             font-weight: bold;
             word-wrap: break-word;
             word-break: break-word;
             white-space: pre-wrap;
-            line-height: 1.15;
+            line-height: 1.1;
         }
         .notes-section {
             position: absolute;
@@ -387,7 +392,7 @@
 </head>
 <body>
     <img src="hero.png" style="display:none;" id="preload-hero">
-    <img src="template.jpg" style="display:none;" id="preload-template">
+    <img src="template.JPG.png" style="display:none;" id="preload-template">
     <datalist id="exercise-suggestions"></datalist>
     <datalist id="name-suggestions"></datalist>
 
@@ -476,7 +481,7 @@
             }
 
             for (let dayIndex = 0; dayIndex < dayCount; dayIndex++) {
-                for (let row = 1; row <= 10; row++) {
+                for (let row = 1; row <= 9; row++) {
                     const exerciseId = `ex_${dayIndex}_${row}`;
                     const valEl = document.getElementById(`in_${exerciseId}`);
                     if (valEl) {
@@ -504,7 +509,7 @@
             inDayCard.className = 'day-card';
             inDayCard.innerHTML = `<h3>${dayName}</h3>`;
 
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= 9; i++) {
                 const exerciseId = `ex_${dayIndex}_${i}`;
                 const inRow = document.createElement('div');
                 inRow.className = 'exercise-input-group';
@@ -537,11 +542,12 @@
             const dateToVal = document.getElementById('in_date_to').value || '';
             const notesContent = document.getElementById('in_notes').value || '';
 
+            const validDays = [];
             for (let dayIndex = 0; dayIndex < dayCount; dayIndex++) {
                 let dayHTML = '';
                 let hasExercises = false;
 
-                for (let row = 1; row <= 10; row++) {
+                for (let row = 1; row <= 9; row++) {
                     const exerciseId = `ex_${dayIndex}_${row}`;
                     const valEl = document.getElementById(`in_${exerciseId}`);
                     let val = '';
@@ -557,17 +563,26 @@
                     `;
                 }
 
-                if (!hasExercises && dayIndex > 0) continue;
+                if (hasExercises || dayIndex === 0) {
+                    const dayName = dayNamesArabic[dayIndex + 1] || (dayIndex + 1);
+                    validDays.push(`
+                        <div class="workout-box">
+                            <div class="day-title">اليوم ${dayName}</div>
+                            ${dayHTML}
+                        </div>
+                    `);
+                }
+            }
 
-                const dayName = dayNamesArabic[dayIndex + 1] || (dayIndex + 1);
-
+            for (let i = 0; i < validDays.length; i += 2) {
                 const paperDiv = document.createElement('div');
                 paperDiv.className = 'paper';
-
+                
                 const notesHTML = notesContent.trim() ? `<div class="notes-section">${notesContent}</div>` : '';
+                const daysHTML = validDays.slice(i, i + 2).join('');
 
                 paperDiv.innerHTML = `
-                    <img src="template.jpg" class="print-bg">
+                    <img src="template.JPG.png" class="print-bg">
                     <div class="footer-phone">0770 137 1373</div>
                     <div class="footer-fb">عمار عبدالعزيز الممشهداني</div>
                     <div class="footer-insta">captain_ammar1</div>
@@ -578,9 +593,8 @@
                     <div class="abs-val val-date-from">${dateVal}</div>
                     <div class="abs-val val-date-to">${dateToVal}</div>
 
-                    <div class="workout-box">
-                        <div class="day-title">اليوم ${dayName}</div>
-                        ${dayHTML}
+                    <div class="workouts-container">
+                        ${daysHTML}
                     </div>
                     ${notesHTML}
                 `;
